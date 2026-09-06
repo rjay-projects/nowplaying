@@ -16,7 +16,7 @@ developer app, no server to run.
 ## Install
 
 ```bash
-git clone https://github.com/<your-username>/nowplaying.git
+git clone https://github.com/rjay-projects/nowplaying.git
 cd nowplaying
 ./install.sh
 ```
