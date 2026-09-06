@@ -6,7 +6,8 @@ equalizer, a vertical volume meter, up next / recently played, and live
 CPU / memory / disk meters. Designed to look good full-screen on small
 displays (tested on a 1024x600 touchscreen) but works in any terminal.
 
-![screenshot placeholder](screenshot.png)
+<img width="1224" height="499" alt="Screenshot 2026-09-06 234613" src="https://github.com/user-attachments/assets/52c72ec2-b4ee-4eb2-8e8c-8977e601a2c0" />
+
 
 Pure Python standard library plus one small external tool (`chafa`) for
 rendering album art. No pip packages, no accounts beyond your own Spotify
