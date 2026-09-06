@@ -8,7 +8,6 @@ displays (tested on a 1024x600 touchscreen) but works in any terminal.
 
 <img width="1224" height="499" alt="Screenshot 2026-09-06 234613" src="https://github.com/user-attachments/assets/52c72ec2-b4ee-4eb2-8e8c-8977e601a2c0" />
 
-
 Pure Python standard library plus one small external tool (`chafa`) for
 rendering album art. No pip packages, no accounts beyond your own Spotify
 developer app, no server to run.
@@ -31,9 +30,21 @@ cd /opt/nowplaying
 python3 authorize.py
 ```
 
-It walks you through creating a free Spotify developer app, then a single
-copy-paste of one URL — no domain, no web server, no Docker required. It
-saves everything into a local `.env` file for you.
+It walks you through creating a free Spotify developer app, then either:
+- **catches the login automatically** if you're running it on the same
+  machine as your browser, or
+- gives you a URL to open on any device (phone, laptop) and asks you to
+  paste back the final URL, if you're on a headless/remote machine (e.g. SSH
+  into a homelab box)
+
+No domain, no web server to run yourself, no Docker required. Everything
+gets saved into a local `.env` file for you.
+
+> **Known Spotify dashboard bug:** after adding the redirect URI, reload the
+> page and confirm it still shows `127.0.0.1` and not `localhost` — Spotify's
+> dashboard sometimes silently reverts this on save, and `localhost` redirect
+> URIs are rejected. If authorization hangs or fails immediately, this is
+> almost always why. `authorize.py` reminds you of this during setup.
 
 Once that's done:
 
@@ -84,9 +95,9 @@ See `.env.example` for the full template.
   emulators do; the bare Linux console (no X/Wayland) does too via the
   framebuffer console, which is what this was originally built for.
 - The `authorize.py` flow uses a loopback redirect URI
-  (`http://127.0.0.1:8888/callback`) that never actually needs to be
-  reachable - Spotify just needs it registered, and the code appears in
-  your browser's address bar after you approve, which you paste back in.
+  (`http://127.0.0.1:8888/callback`) per Spotify's current OAuth
+  requirements (plain `localhost` and non-loopback HTTP addresses are no
+  longer accepted).
 
 ## License
 
