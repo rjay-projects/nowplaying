@@ -12,6 +12,28 @@ Pure Python standard library plus one small external tool (`chafa`) for
 rendering album art. No pip packages, no accounts beyond your own Spotify
 developer app, no server to run.
 
+## Requirements
+
+- Linux or macOS with Python 3.8+
+- **An active Spotify Premium subscription on the account that creates the
+  developer app.** Since Spotify's February 2026 policy change, Development
+  Mode apps require the app owner to have Premium for the Web API to work at
+  all — this applies even to simple read-only calls like "what's playing
+  now." If you see `403: Active premium subscription required for the owner
+  of the app`, this is why.
+- `chafa` for album art (the installer handles this; the app still runs
+  without it, just without art)
+
+> **If you're setting this up over VS Code Remote-SSH:** during the
+> `authorize.py` step, go to the **Ports** panel first and check whether
+> port 8888 is being auto-forwarded. VS Code sometimes forwards it
+> speculatively before anything is even listening, which makes the
+> authorization page hang forever instead of failing fast the way it's
+> supposed to. Stop forwarding that port before you start `authorize.py`,
+> or remove it the moment you see the "port 8888 is available" popup — this
+> is the single most likely thing to trip you up if you're doing this over
+> Remote-SSH like the original testing for this project was.
+
 ## Install
 
 ```bash
@@ -40,6 +62,12 @@ It walks you through creating a free Spotify developer app, then either:
 No domain, no web server to run yourself, no Docker required. Everything
 gets saved into a local `.env` file for you.
 
+> **The page will fail to load after you click Agree — that's expected.**
+> Nothing is actually listening at that address from the browser's point of
+> view, so it can't finish loading. That's fine: the address bar still
+> updates with the code you need, which is either caught automatically or
+> which you copy and paste back in, depending on which mode you're using.
+
 > **Known Spotify dashboard bug:** after adding the redirect URI, reload the
 > page and confirm it still shows `127.0.0.1` and not `localhost` — Spotify's
 > dashboard sometimes silently reverts this on save, and `localhost` redirect
@@ -53,18 +81,6 @@ nowplaying
 ```
 
 Ctrl+C to quit.
-
-## Requirements
-
-- Linux or macOS with Python 3.8+
-- **An active Spotify Premium subscription on the account that creates the
-  developer app.** Since Spotify's February 2026 policy change, Development
-  Mode apps require the app owner to have Premium for the Web API to work at
-  all — this applies even to simple read-only calls like "what's playing
-  now." If you see `403: Active premium subscription required for the owner
-  of the app`, this is why.
-- `chafa` for album art (the installer handles this; the app still runs
-  without it, just without art)
 
 ## Manual install
 
@@ -103,6 +119,51 @@ See `.env.example` for the full template.
   (`http://127.0.0.1:8888/callback`) per Spotify's current OAuth
   requirements (plain `localhost` and non-loopback HTTP addresses are no
   longer accepted).
+
+## Troubleshooting
+
+**"Active premium subscription required for the owner of the app"** — see
+the Requirements section at the top. This isn't fixable in code - the app
+owner's account needs Premium, full stop.
+
+**Authorization page shows an error, or the redirect seems to fail
+immediately** — reload the Spotify dashboard page after adding the redirect
+URI and confirm it still shows `127.0.0.1` and not `localhost`. Spotify's
+dashboard has a known bug where it can silently revert `127.0.0.1` back to
+`localhost` on save, and `localhost` redirect URIs are rejected outright.
+
+**Browser tab hangs forever / never redirects after clicking Agree, even
+though the redirect URI is correct** — see the VS Code Remote-SSH note near
+the top of this README about port 8888 auto-forwarding. Also: **while a
+page is stuck loading, you don't need to wait for it** - the address bar
+updates with the destination URL immediately, before the connection attempt
+even resolves. Copy whatever's in the address bar as soon as it's a
+`127.0.0.1:8888/callback?code=...` URL.
+
+**Authorization page won't load / stays blank in Incognito/Private mode** —
+some browsers block third-party cookies more aggressively in private
+windows, which can prevent Spotify's login page from rendering properly.
+Try a normal browser window instead.
+
+**403 errors after authorizing with a different account than the one that
+created the app** — apps in Development Mode only allow up to 5 explicitly
+whitelisted accounts (Dashboard → your app → User Management), regardless
+of what scopes were granted during login. Add the account's email there,
+then redo `authorize.py` completely (not just restart `nowplaying.py` -
+you need a token generated *after* the whitelist entry exists).
+
+**Multi-line commands pasted into a terminal not working as expected** — if
+you're pasting several commands at once (e.g. `git init` / `git add .` /
+`git commit`), make sure your terminal is actually running them as separate
+lines and not concatenating them into one. Run each command individually if
+in doubt.
+
+**Only one Client ID allowed per developer going forward** — Spotify's
+February 2026 policy caps new apps at 1 Client ID per developer account
+(apps created before the cap are grandfathered). If you already have an app
+and want to test with the same Premium account, add
+`http://127.0.0.1:8888/callback` as an *additional* Redirect URI on your
+existing app rather than creating a new one.
 
 ## License
 
