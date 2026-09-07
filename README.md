@@ -57,7 +57,12 @@ Ctrl+C to quit.
 ## Requirements
 
 - Linux or macOS with Python 3.8+
-- A Spotify account (free or Premium both work for reading playback state)
+- **An active Spotify Premium subscription on the account that creates the
+  developer app.** Since Spotify's February 2026 policy change, Development
+  Mode apps require the app owner to have Premium for the Web API to work at
+  all — this applies even to simple read-only calls like "what's playing
+  now." If you see `403: Active premium subscription required for the owner
+  of the app`, this is why.
 - `chafa` for album art (the installer handles this; the app still runs
   without it, just without art)
 

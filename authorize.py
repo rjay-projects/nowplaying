@@ -109,7 +109,15 @@ def extract_code_from_pasted_url(pasted):
 
 def main():
     print("=== Spotify authorization for nowplaying.py ===\n")
-    print("First, create a Spotify app (free, takes a minute):")
+    print(
+        "IMPORTANT: since Spotify's February 2026 policy change, the account "
+        "that creates the developer app below must have an active Premium "
+        "subscription - the Web API won't work in Development Mode without "
+        "it, even for simple read-only calls. If you don't have Premium on "
+        "this account, this won't work no matter how correctly everything "
+        "else below is set up.\n"
+    )
+    print("Create a Spotify app (free, takes a minute):")
     print("  1. Go to https://developer.spotify.com/dashboard")
     print("  2. Click 'Create app'")
     print("  3. Fill in any name/description")
